@@ -1,4 +1,4 @@
-# anistream
+# animeshka
 
 ## Project setup
 ```

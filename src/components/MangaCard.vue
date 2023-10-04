@@ -1,9 +1,9 @@
 <template>
   <div class="container">
-    <img :src="anime.images.jpg.large_image_url" alt="">
+    <img :src="manga.images.jpg.large_image_url" alt="">
     <div class="info">
-      <router-link :to="{ name: 'anime', params: { id: anime.mal_id } }">
-        <h1>{{ anime.title }}</h1>
+      <router-link :to="{ name: 'manga', params: { id: manga.mal_id } }">
+        <h1>{{ manga.title }}</h1>
       </router-link>
       <div class="rating"><svg fill="#ffffff" viewBox="0 0 64 64" version="1.1" xmlns="http://www.w3.org/2000/svg"
           xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/"
@@ -67,10 +67,9 @@
             </g>
           </g>
         </svg>
-        <span class="score">{{ anime.score }}</span>
+        <span class="score">{{ manga.score }}</span>
       </div>
-      <p class="synopsis">{{ anime.synopsis }}</p>
-      <span class="episodes">Episodes: {{ anime.episodes }}</span>
+      <p class="synopsis">{{ manga.synopsis }}</p>
     </div>
   </div>
 </template>
@@ -79,8 +78,7 @@
 import { defineComponent } from "vue"
 
 export default defineComponent({
-  props: ['anime'],
-  name: 'AnimeCard'
+  props: ['manga']
 })
 </script>
 <style scoped>

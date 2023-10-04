@@ -1,11 +1,10 @@
 <template>
-  <div class="container">
+  <div class="container" v-if="!notFound">
     <img :src="anime.images.jpg.large_image_url" alt="">
     <div class="info">
-      <router-link :to="{ name: 'anime', params: { id: anime.mal_id } }">
-        <h1>{{ anime.title }}</h1>
-      </router-link>
-      <div class="rating"><svg fill="#ffffff" viewBox="0 0 64 64" version="1.1" xmlns="http://www.w3.org/2000/svg"
+      <h1>{{ anime.title }}</h1>
+      <div class="rating" v-if="anime.score">
+        <svg fill="#ffffff" viewBox="0 0 64 64" version="1.1" xmlns="http://www.w3.org/2000/svg"
           xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/"
           style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;" stroke="#ffffff">
           <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -69,30 +68,96 @@
         </svg>
         <span class="score">{{ anime.score }}</span>
       </div>
-      <p class="synopsis">{{ anime.synopsis }}</p>
-      <span class="episodes">Episodes: {{ anime.episodes }}</span>
+      <p class="synopsis" v-if="anime.synopsis">{{ anime.synopsis }}</p>
+      <span class="episodes" v-if="anime.episodes">Episodes: {{ anime.episodes }}</span>
+      <span>Status: {{ anime.status ? anime.status : 'no status' }}</span>
+      <div class="genres" v-if="anime.genres">
+        <span>Genres: </span>
+        <div v-for="(genre, i) in anime.genres" :key="genre.mal_id">
+          <span>{{ genre.name }}{{ i < anime.genres.length - 1 ? ',' : '' }}</span>
+        </div>
+      </div>
+      <div class="trailer">
+        <p>Trailer: </p>
+        <iframe v-if="anime.trailer.embed_url" width="500" height="300" :src="anime.trailer.embed_url" frameborder="0"
+          allow="accelerometer; encrypted-media; gyroscope; picture-in-picture">
+        </iframe>
+        <span v-else>no trailer</span>
+      </div>
+      <div class="streaming" v-if="anime.streaming" v-for="stream in anime.streaming">
+        <v-btn class="bg-purple-darken-2" :href="stream.url" target="blank">Watch on <strong> {{ stream.name
+        }}</strong></v-btn>
+      </div>
     </div>
+  </div>
+  <div v-else>
+    Not Found
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue"
+import { defineComponent } from 'vue';
+import { mapGetters } from 'vuex'
+import animePlaceholder from '@/interfaces/animePlaceholder'
 
 export default defineComponent({
-  props: ['anime'],
-  name: 'AnimeCard'
+  name: 'AnimeView',
+  data() {
+    return {
+      anime: animePlaceholder,
+      notFound: false
+    }
+  },
+  async mounted() {
+    this.fetchAnime()
+  },
+  computed: mapGetters(['allAnimes']),
+  methods: {
+    async fetchAnime() {
+      this.notFound = false
+      this.anime = animePlaceholder
+      const anime = this.allAnimes.find((a: any) => a.mal_id == this.$route.params.id)
+      if (anime) {
+        this.anime = anime
+        try {
+          const response = await fetch(`https://api.jikan.moe/v4/anime/${this.$route.params.id}/streaming`)
+            .then(res => res.ok ? res.json() : this.notFound = true)
+            .then(data => data.data)
+          this.anime.streaming = response
+          console.log(this.anime)
+        }
+        catch (e) {
+          console.log(e)
+        }
+      }
+
+      if (anime == null || anime == undefined) {
+        try {
+          const response = await fetch(`https://api.jikan.moe/v4/anime/${this.$route.params.id}/full`)
+            .then(res => res.ok ? res.json() : this.notFound = true)
+            .then(data => data.data)
+
+          this.anime = response
+        }
+        catch (e) {
+          console.log(e)
+        }
+      }
+    }
+  }
 })
 </script>
+
 <style scoped>
 .container {
   display: flex;
   padding: 10px 20px;
-  text-align: justify;
   width: 100%;
 }
 
 img {
-  width: 225px;
+  width: 420px;
+  height: max-content;
   margin-right: 20px;
   border-radius: 10px;
 }
@@ -104,6 +169,10 @@ svg {
 
 a {
   text-decoration: none;
+}
+
+p {
+  text-align: left;
 }
 
 .title {
@@ -123,7 +192,8 @@ a {
 .synopsis {
   color: #a4a4a4;
   font-size: 16px;
-  font-weight: 300;
+  font-weight: 400;
+  text-align: justify;
 }
 
 .info {
@@ -132,6 +202,10 @@ a {
   justify-content: flex-start;
   align-items: flex-start;
   gap: 10px;
+}
+
+.genres {
+  display: flex;
 }
 
 @media screen and (max-width: 768px) {

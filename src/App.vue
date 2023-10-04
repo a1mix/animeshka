@@ -1,7 +1,7 @@
 <template>
   <navigation-bar />
   <section class="main-container">
-    <router-view/>
+    <router-view />
   </section>
 </template>
 
@@ -16,19 +16,21 @@ export default defineComponent({
 </script>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap');
+
 * {
-	padding: 0px;
-	margin: 0px;
-	border: none;
+  padding: 0px;
+  margin: 0px;
+  border: none;
   color: rgb(205, 205, 205);
 }
 
 #app {
-  font-family: sans-serif;
+  font-family: 'Roboto', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  font-weight: 600;
+  font-weight: 400;
   color: #bebebe;
   box-sizing: border-box;
   background-color: black;
