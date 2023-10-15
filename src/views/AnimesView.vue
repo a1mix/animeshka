@@ -1,18 +1,24 @@
 <template>
-  <v-sheet width="700" class="mx-auto bg-black">
-    <v-form ref="form">
-      <v-text-field v-model="searchParams.searchQuery" label="Search...">
+  <v-sheet width="600" class="mx-auto bg-black">
+    <v-form ref="form" @submit.prevent="fetchAnimes({ s: searchParams, f: 1 })" class="d-block">
+      <v-text-field :model-value="searchParams.searchQuery" @update:model-value="setSearchQuery(searchParams.searchQuery = $event)" label="Search...">
       </v-text-field>
-      <v-autocomplete clearable label="Types" v-model="searchParams.selectedType" :items="animeTypes">
+      <v-autocomplete clearable label="Types" :model-value="searchParams.selectedType" @update:model-value="setSelectedType(searchParams.selectedType = $event)" :items="animeTypes">
       </v-autocomplete>
-    </v-form>
-    <v-btn @click.prevent="fetchAnimes({ s: searchParams, f: 1 })" class="bg-purple-darken-2 d-block mx-auto" width="600">
+      <v-btn type="submit" color="#9142b9" class="d-block mx-auto">
       Search
     </v-btn>
+    </v-form>
   </v-sheet>
-  <h2 v-if="isLoading">
-    Loading...
-  </h2>
+  
+  <div class="text-center">
+    <v-pagination :model-value="searchParams.page" @update:model-value="setPage(searchParams.page = $event)" :length="totalAnimePages" :total-visible="7" prev-icon="mdi-menu-left"
+      next-icon="mdi-menu-right" @click="fetchAnimes({ s: searchParams, f: 0 })"></v-pagination>
+  </div>
+  <v-progress-circular
+      indeterminate
+    v-if="isLoading"
+    ></v-progress-circular>
   <div class="animeList" v-if="isResult">
     <AnimeCard v-for="anime in allAnimes" :key="anime.mal_id" :anime="anime" />
   </div>
@@ -21,34 +27,33 @@
   </h2>
 
   <div class="text-center">
-    <v-pagination v-model="searchParams.page" :length="totalAnimePages" :total-visible="7" prev-icon="mdi-menu-left"
-      next-icon="mdi-menu-right" @click="fetchAnimes({ s: searchParams, f: 0 })"></v-pagination>
+    <v-pagination :model-value="searchParams.page" @update:model-value="setPage(searchParams.page = $event)" :length="totalAnimePages" :total-visible="7" prev-icon="mdi-menu-left"
+      next-icon="mdi-menu-right" @click="fetchAnimes({ s: searchParams, f: 0 });toTop()"></v-pagination>
   </div>
 </template>
   
 <script lang="ts">
 import { defineComponent } from 'vue';
 import AnimeCard from '@/components/AnimeCard.vue';
-import { mapGetters, mapActions } from 'vuex';
+import { mapGetters, mapActions, mapMutations } from 'vuex';
 
 export default defineComponent({
   name: 'AnimesView',
   components: {
     AnimeCard
   },
-  data() {
-    return {
-      searchParams: {
-        selectedType: '',
-        searchQuery: '',
-        limit: 15,
-        page: 1
-      }
-    }
+  computed: mapGetters(['allAnimes', 'animeTypes', 'totalAnimePages', 'isLoading', 'isResult', 'searchParams']),
+  methods: {
+    ...mapMutations(['setSelectedType', 'setSearchQuery', 'setLimit', 'setPage']),
+    ...mapActions(['fetchAnimes']),
+    toTop() {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    },
   },
-  computed: mapGetters(['allAnimes', 'animeTypes', 'totalAnimePages', 'isLoading', 'isResult']),
-  methods: mapActions(['fetchAnimes', 'fetchAnimes']),
-  async mounted() {
+  async created() {
     this.fetchAnimes({
       s: {
         limit: 15,

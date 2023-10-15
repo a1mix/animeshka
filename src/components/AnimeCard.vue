@@ -71,16 +71,77 @@
       </div>
       <p class="synopsis">{{ anime.synopsis }}</p>
       <span class="episodes">Episodes: {{ anime.episodes }}</span>
+      <v-btn color="#9142b9" :disabled="isAnimeInFavorite" @click="addAnimeToFavorites()" v-if="!isAnimeInFavorite">
+        Add to favorites
+      </v-btn>
+      <v-btn color="red" :disabled="!isAnimeInFavorite" @click="deleteAnimeFromFavorites()" v-if="isAnimeInFavorite">
+        Delete from favorites
+      </v-btn>
     </div>
   </div>
 </template>
 
 <script lang="ts">
+import axios from "axios"
 import { defineComponent } from "vue"
+import { mapGetters, mapMutations } from "vuex"
 
 export default defineComponent({
   props: ['anime'],
-  name: 'AnimeCard'
+  name: 'AnimeCard',
+  data() {
+    return {
+      isAnimeInFavorite: false
+    }
+  },
+  created() {
+    this.checkAnimeInFavorite()
+  },
+  computed: {
+    ...mapGetters(['userFavoriteAnimes', 'currentUser'])
+  },
+  methods: {
+    ...mapMutations(['setUserAnimes']),
+    async addAnimeToFavorites() {
+      try {
+        const response = await axios.post('http://localhost:5000/users/anime',
+          {
+            userId: this.currentUser.id,
+            animeId: this.anime.mal_id,
+            title: this.anime.title
+          },
+          {
+            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+          })
+        this.setUserAnimes(response.data)
+        this.checkAnimeInFavorite()
+      }
+      catch (e: any) {
+        console.log(e.response)
+      }
+    },
+    async deleteAnimeFromFavorites() {
+      try {
+        const response = await axios.delete(`http://localhost:5000/users/anime/${this.anime.mal_id}`,
+          {
+            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+          })
+        this.setUserAnimes(response.data)
+        this.checkAnimeInFavorite()
+      }
+      catch (e: any) {
+        console.log(e.response)
+      }
+    },
+    checkAnimeInFavorite() {
+      if (this.userFavoriteAnimes) {
+        let animeId = this.userFavoriteAnimes.find((a: any) => a.id === this.anime.mal_id)
+        animeId ?
+          this.isAnimeInFavorite = true :
+          this.isAnimeInFavorite = false
+      }
+    }
+  }
 })
 </script>
 <style scoped>
@@ -167,4 +228,5 @@ a {
   .episodes {
     font-size: 10px;
   }
-}</style>
+}
+</style>

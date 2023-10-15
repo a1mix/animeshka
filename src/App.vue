@@ -7,10 +7,17 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { mapActions } from 'vuex';
 import NavigationBar from './components/NavigationBar.vue';
 export default defineComponent({
   components: {
     NavigationBar
+  },
+  async created() {
+    this.auth()
+  },
+  methods: {
+    ...mapActions(['auth'])
   }
 })
 </script>

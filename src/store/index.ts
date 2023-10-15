@@ -1,17 +1,31 @@
 import { createStore } from 'vuex'
 import axios from 'axios'
+import { IAnime } from '@/interfaces/IAnime'
+
+const state = {
+  login: '',
+  password: '',
+  animes: [],
+  mangas: [],
+  typesOfAnime: ['all', 'tv', 'movie', 'ova', 'special', 'music'],
+  totalAnimePages: 0,
+  isLoading: false,
+  isResult: true,
+  currentUser: {
+    favoriteAnimes: [] as IAnime[],
+    roles: []
+  },
+  isAuth: false,
+  searchParams: {
+    selectedType: '',
+    searchQuery: '',
+    limit: 15,
+    page: 1
+  }
+}
 
 export default createStore({
-  state: () => ({
-    login: '',
-    password: '',
-    animes: [],
-    mangas: [],
-    typesOfAnime: ['all', 'tv', 'movie', 'ova', 'special', 'music'],
-    totalAnimePages: 1,
-    isLoading: false,
-    isResult: true
-  }),
+  state,
   getters: {
     allAnimes(state) {
       return state.animes
@@ -30,6 +44,18 @@ export default createStore({
     },
     isResult(state) {
       return state.isResult
+    },
+    isAuth(state) {
+      return state.isAuth
+    },
+    currentUser(state) {
+      return state.currentUser
+    },
+    userFavoriteAnimes(state) {
+      return state.currentUser.favoriteAnimes
+    },
+    searchParams(state) {
+      return state.searchParams
     }
   },
   mutations: {
@@ -44,13 +70,33 @@ export default createStore({
     },
     updateIsResult(state, value) {
       state.isResult = value
+    },
+    setUser(state, user) {
+      state.currentUser = user
+    },
+    updateIsAuth(state, value) {
+      state.isAuth = value
+    },
+    setUserAnimes(state, value) {
+      state.currentUser.favoriteAnimes = value
+    },
+    setSelectedType(state, type) {
+      state.searchParams.selectedType = type;
+    },
+    setSearchQuery(state, query) {
+      state.searchParams.searchQuery = query;
+    },
+    setLimit(state, limit) {
+      state.searchParams.limit = limit;
+    },
+    setPage(state, page) {
+      state.searchParams.page = page;
     }
   },
   actions: {
     async fetchAnimes(context, payload) {
       context.commit('updateIsResult', true)
       context.commit('updateIsLoading', true)
-      console.log(payload)
 
       const { s: searchParams, f: flag } = payload
 
@@ -65,7 +111,6 @@ export default createStore({
           return context.commit('updateIsLoading', false)
         }
         try {
-          console.log("fetching")
           res = await axios.get(`https://api.jikan.moe/v4/anime`, {
             params: {
               limit: 15,
@@ -85,7 +130,6 @@ export default createStore({
         }
         try {
           if (searchParams.selectedType == '' || searchParams.selectedType == 'all') {
-            console.log("fetching")
             res = await axios.get(`https://api.jikan.moe/v4/anime`, {
               params: {
                 q: searchParams.searchQuery,
@@ -97,7 +141,6 @@ export default createStore({
             })
           }
           else {
-            console.log("fetching")
             res = await axios.get(`https://api.jikan.moe/v4/anime`, {
               params: {
                 q: searchParams.searchQuery,
@@ -129,6 +172,24 @@ export default createStore({
         context.commit('updateIsResult', false)
       }
       context.commit('updateIsLoading', false)
+    },
+    async auth(context) {
+      try {
+        const response = await axios.get("http://localhost:5000/auth/auth",
+        {
+          headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
+        })
+        context.commit('updateIsAuth', true)
+        context.commit('setUser', {
+          id: response.data.id,
+          email: response.data.email,
+          roles: response.data.roles,
+          favoriteAnimes: response.data.animes
+        })
+        
+      } catch (error) {
+       console.log(error)
+      }
     }
   }
 })

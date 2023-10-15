@@ -1,6 +1,10 @@
 <template>
-  <div class="container" v-if="!notFound">
-    <img :src="anime.images.jpg.large_image_url" alt="">
+  <v-progress-circular
+      indeterminate
+    v-if="isLoading"
+    ></v-progress-circular>
+  <div class="container" v-if="!notFound && !isLoading">
+    <img :src="anime.images.jpg.large_image_url" alt="" class="anime-image">
     <div class="info">
       <h1>{{ anime.title }}</h1>
       <div class="rating" v-if="anime.score">
@@ -70,27 +74,49 @@
       </div>
       <p class="synopsis" v-if="anime.synopsis">{{ anime.synopsis }}</p>
       <span class="episodes" v-if="anime.episodes">Episodes: {{ anime.episodes }}</span>
+      <span class="duration" v-if="anime.duration">Duration: {{ anime.duration }}</span>
       <span>Status: {{ anime.status ? anime.status : 'no status' }}</span>
-      <div class="genres" v-if="anime.genres">
+      <div class="genres" v-if="anime.genres.length > 0">
         <span>Genres: </span>
         <div v-for="(genre, i) in anime.genres" :key="genre.mal_id">
           <span>{{ genre.name }}{{ i < anime.genres.length - 1 ? ',' : '' }}</span>
         </div>
       </div>
-      <div class="trailer">
+
+      <div class="trailer" v-if="anime.trailer.embed_url">
         <p>Trailer: </p>
-        <iframe v-if="anime.trailer.embed_url" width="500" height="300" :src="anime.trailer.embed_url" frameborder="0"
+        <iframe width="500" height="300" :src="anime.trailer.embed_url" frameborder="0"
           allow="accelerometer; encrypted-media; gyroscope; picture-in-picture">
         </iframe>
-        <span v-else>no trailer</span>
       </div>
-      <div class="streaming" v-if="anime.streaming" v-for="stream in anime.streaming">
-        <v-btn class="bg-purple-darken-2" :href="stream.url" target="blank">Watch on <strong> {{ stream.name
-        }}</strong></v-btn>
+      <div class="streaming"  v-if="anime.streaming.length > 0"  v-for="stream in anime.streaming" :key="stream.name">
+        <v-btn class="bg-purple-darken-2" :href="stream.url" target="blank">
+          Watch on <strong> {{ stream.name }}</strong>
+        </v-btn>
+      </div>
+    </div>
+
+    <div v-if="anime.characters" class="characters item2">
+      <h3 v-if="anime.characters" class="characters-title">Main characters</h3>
+      <div v-for="character in anime.characters" :key="character.character.mal_id">
+        <div class="character" v-if="character.role == 'Main'">
+          <img :src="character.character.images.jpg.image_url" alt="" class="character-img">
+          <h3>{{ character.character.name }}</h3>
+        </div>
+      </div>
+    </div>
+
+    <div v-if="anime.relations" class="relations item2">
+      <h3 class="relations-title">Related Releases</h3>
+      <div v-for="relation in anime.relations" :key="relation.relation">
+        <h3>{{ relation.relation }}</h3>
+        <div v-for="entry in relation.entry" :key="entry.mal_id">
+          <a :href="'/anime/' + entry.mal_id" v-if="entry.type = 'anime'">{{ entry.name }}</a>
+        </div>
       </div>
     </div>
   </div>
-  <div v-else>
+  <div v-if="notFound">
     Not Found
   </div>
 </template>
@@ -99,13 +125,15 @@
 import { defineComponent } from 'vue';
 import { mapGetters } from 'vuex'
 import animePlaceholder from '@/interfaces/animePlaceholder'
+import { IAnime } from '@/interfaces/IAnime';
 
 export default defineComponent({
   name: 'AnimeView',
   data() {
     return {
-      anime: animePlaceholder,
-      notFound: false
+      anime: {} as IAnime,
+      notFound: false,
+      isLoading: true
     }
   },
   async mounted() {
@@ -115,33 +143,29 @@ export default defineComponent({
   methods: {
     async fetchAnime() {
       this.notFound = false
+      this.isLoading = true
       this.anime = animePlaceholder
-      const anime = this.allAnimes.find((a: any) => a.mal_id == this.$route.params.id)
-      if (anime) {
-        this.anime = anime
-        try {
-          const response = await fetch(`https://api.jikan.moe/v4/anime/${this.$route.params.id}/streaming`)
-            .then(res => res.ok ? res.json() : this.notFound = true)
-            .then(data => data.data)
-          this.anime.streaming = response
-          console.log(this.anime)
-        }
-        catch (e) {
-          console.log(e)
-        }
-      }
+      try {
+        const response = await fetch(`https://api.jikan.moe/v4/anime/${this.$route.params.id}/full`)
+          .then(res => res.ok ? res.json() : this.notFound = true)
+          .then(data => data.data)
 
-      if (anime == null || anime == undefined) {
-        try {
-          const response = await fetch(`https://api.jikan.moe/v4/anime/${this.$route.params.id}/full`)
-            .then(res => res.ok ? res.json() : this.notFound = true)
-            .then(data => data.data)
-
+        if (response) {
           this.anime = response
+          const characters = await fetch(`https://api.jikan.moe/v4/anime/${this.$route.params.id}/characters`)
+            .then(res => res.ok ? res.json() : this.notFound = true)
+            .then(data => data.data)
+          if (characters) {
+            this.anime.characters = characters
+          }
         }
-        catch (e) {
-          console.log(e)
+        else {
+          this.notFound = true
         }
+        this.isLoading = false
+      }
+      catch (e) {
+        console.log(e)
       }
     }
   }
@@ -150,16 +174,21 @@ export default defineComponent({
 
 <style scoped>
 .container {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
   padding: 10px 20px;
   width: 100%;
 }
 
-img {
-  width: 420px;
-  height: max-content;
-  margin-right: 20px;
-  border-radius: 10px;
+.anime-image {
+  width: 100%;
+  object-fit: cover;
+  border-radius: 20px;
+}
+
+.item2 {
+  padding-top: 20px;
+  grid-column: span 2;
 }
 
 svg {
@@ -202,10 +231,43 @@ p {
   justify-content: flex-start;
   align-items: flex-start;
   gap: 10px;
+  padding-left: 20px;
 }
 
 .genres {
   display: flex;
+}
+
+.character {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.character-img {
+  max-width: 300px;
+  border-radius: 10px;
+}
+
+.characters {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: auto auto auto auto;
+}
+
+.relations {
+  display: grid;
+  grid-template-columns: auto auto auto;
+}
+
+.relations-title {
+  grid-column: span 3;
+}
+
+.characters-title {
+  grid-column: span 4;
 }
 
 @media screen and (max-width: 768px) {
@@ -230,6 +292,7 @@ p {
     font-size: 14px;
   }
 
+
   .synopsis {
     font-size: 8px;
     display: -webkit-box;
@@ -241,4 +304,5 @@ p {
   .episodes {
     font-size: 10px;
   }
-}</style>
+}
+</style>
