@@ -88,7 +88,7 @@ router.beforeEach(async (to, from) => {
     }
   }
 
-  if(to.meta.isAdminRoleRequired && !roles.find((role: any) => role.value === "ADMIN")) {
+  if(to.meta.isAdminRoleRequired && !roles.find((role:  {value: string}) => role.value === "ADMIN")) {
     return {
       path: '/'
     }

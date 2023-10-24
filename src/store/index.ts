@@ -189,6 +189,7 @@ export default createStore({
         
       } catch (error) {
        console.log(error)
+       localStorage.removeItem('token')
       }
     }
   }
