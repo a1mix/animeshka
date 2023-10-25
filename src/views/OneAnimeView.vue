@@ -99,10 +99,8 @@
     <div v-if="anime.characters" class="characters item2">
       <h3 v-if="anime.characters" class="characters-title">Main characters</h3>
       <div v-for="character in anime.characters" :key="character.character.mal_id">
-        <div class="character" v-if="character.role == 'Main'">
-          <img :src="character.character.images.jpg.image_url" alt="" class="character-img">
-          <h3>{{ character.character.name }}</h3>
-        </div>
+        <img :src="character.character.images.jpg.image_url" alt="" class="character-img">
+        <h3>{{ character.character.name }}</h3>
       </div>
     </div>
 
@@ -112,10 +110,13 @@
         <h3>{{ relation.relation }}</h3>
         <div v-for="entry in relation.entry" :key="entry.mal_id">
           <a :href="'/anime/' + entry.mal_id" v-if="entry.type = 'anime'">{{ entry.name }}</a>
+          <p v-else>{{ entry.name }}</p>
         </div>
       </div>
     </div>
   </div>
+
+    <ReviewCard v-for="review in anime.reviews?.data" :review="review" :key="review.mal_id" />
   <div v-if="notFound">
     Not Found
   </div>
@@ -126,6 +127,7 @@ import { defineComponent } from 'vue';
 import { mapGetters } from 'vuex'
 import animePlaceholder from '@/interfaces/animePlaceholder'
 import { IAnime } from '@/interfaces/IAnime';
+import ReviewCard from '@/components/ReviewCard.vue'
 
 export default defineComponent({
   name: 'AnimeView',
@@ -136,6 +138,7 @@ export default defineComponent({
       isLoading: true
     }
   },
+  components: { ReviewCard },
   async mounted() {
     this.fetchAnime()
   },
@@ -155,8 +158,18 @@ export default defineComponent({
           const characters = await fetch(`https://api.jikan.moe/v4/anime/${this.$route.params.id}/characters`)
             .then(res => res.ok ? res.json() : this.notFound = true)
             .then(data => data.data)
+          const mainCharacters = characters.filter((character: any) => {
+            if (character.role === "Main") return true
+            else return false
+          })
           if (characters) {
-            this.anime.characters = characters
+            this.anime.characters = mainCharacters
+          }
+
+          const reviews = await fetch(`https://api.jikan.moe/v4/anime/${this.$route.params.id}/reviews`)
+            .then(res => res.ok ? res.json() : this.notFound = true)
+          if (reviews) {
+            this.anime.reviews = reviews
           }
         }
         else {

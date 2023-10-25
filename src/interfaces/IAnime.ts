@@ -37,9 +37,10 @@ export interface IAnime {
   demographics: Demographic[]
   relations: Relation[]
   theme: Theme2
-  external?: External[]
-  streaming?: Streaming[],
-  characters?: RootCharacter[]
+  external: External[]
+  streaming: Streaming[],
+  characters?: RootCharacter[],
+  reviews?: Review
 }
 
 interface Images {
@@ -177,7 +178,7 @@ interface Streaming {
   url: string
 }
 
-interface RootCharacter {
+export interface RootCharacter {
   character: Character
   role: string
   voice_actors: VoiceActor[]
@@ -200,4 +201,46 @@ interface Person {
   url: string
   images: Images
   name: string
+}
+
+interface Review {
+  data: Daum[]
+  pagination: Pagination
+}
+
+export interface Daum {
+  user: User
+  mal_id: number
+  url: string
+  type: string
+  reactions: Reactions
+  date: string
+  review: string
+  score: number
+  tags: string[]
+  is_spoiler: boolean
+  is_preliminary: boolean
+  episodes_watched: number
+}
+
+interface User {
+  username: string
+  url: string
+  images: Images
+}
+
+interface Reactions {
+  overall: number
+  nice: number
+  love_it: number
+  funny: number
+  confusing: number
+  informative: number
+  well_written: number
+  creative: number
+}
+
+interface Pagination {
+  last_visible_page: number
+  has_next_page: boolean
 }
