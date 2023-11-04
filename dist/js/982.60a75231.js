@@ -1,0 +1,2 @@
+"use strict";(self["webpackChunkanistream"]=self["webpackChunkanistream"]||[]).push([[982],{2982:function(n,e,s){s.r(e),s.d(e,{default:function(){return d}});var a=s(3396);const r={class:"about"},t=(0,a._)("h1",null,"Made by aimixess",-1),u=(0,a._)("h3",null,"in the process of developing",-1),i=[t,u];function c(n,e){return(0,a.wg)(),(0,a.iD)("div",r,i)}var l=s(89);const o={},f=(0,l.Z)(o,[["render",c]]);var d=f}}]);
+//# sourceMappingURL=982.60a75231.js.map
