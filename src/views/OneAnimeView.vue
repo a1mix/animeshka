@@ -91,7 +91,7 @@
       </div>
       <div class="btn-ep-num">
         <div v-for="(video, i) in anime.videos" :key="video.episode_number">
-          <router-link :to="{ name: 'watch', params: { id: video.episode_path } }">
+          <router-link :to="{ name: 'watch', params: { filename: video.episode_path } }">
             <button> {{ video.episode_number }} серия</button>
           </router-link>
         </div>

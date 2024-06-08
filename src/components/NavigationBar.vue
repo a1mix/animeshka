@@ -12,6 +12,7 @@
       <router-link v-if="isAuth" to="/user/favorites">Избранное</router-link>
       <router-link v-if="isAuth" to="/user/account">Аккаунт</router-link>
       
+      <router-link v-if="isUserAdmin" to="/episodes">Эпизоды</router-link>
       <router-link v-if="isUserAdmin" to="/admin">Админ</router-link>
     </div>
   </nav>

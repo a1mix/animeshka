@@ -1,51 +1,28 @@
 <template>
-    <div>
-      <video ref="videoPlayer" :src="videoUrl" controls></video>
-    </div>
-  </template>
-  
-  <script>
-  import { defineComponent } from 'vue';
-  export default defineComponent({
-    name: 'AnimePlayerView',
-    data() {
-      return {
-        videoUrl: '',
-        currentTime: 0,
-        videoDuration: 0
-      };
-    },
-    mounted() {
-      console.log(this.$route.params)
-      this.videoUrl = require('@/assets/videos/' + this.$route.params.id)
-      this.$refs.videoPlayer.addEventListener('loadedmetadata', () => {
-        this.videoDuration = this.$refs.videoPlayer.duration;
-      });
-    },
-    methods: {
-      startVideo() {
-        this.$refs.videoPlayer.play();
-      },
-      stopVideo() {
-        this.$refs.videoPlayer.pause();
-      },
-      seekVideo() {
-        this.$refs.videoPlayer.currentTime = this.currentTime;
-      },
-      toggleFullScreen() {
-        if (this.$refs.videoPlayer.requestFullscreen) {
-          this.$refs.videoPlayer.requestFullscreen();
-        } else if (this.$refs.videoPlayer.mozRequestFullScreen) {
-          this.$refs.videoPlayer.mozRequestFullScreen();
-        } else if (this.$refs.videoPlayer.webkitRequestFullscreen) {
-          this.$refs.videoPlayer.webkitRequestFullscreen();
-        } else if (this.$refs.videoPlayer.msRequestFullscreen) {
-          this.$refs.videoPlayer.msRequestFullscreen();
-        }
-      }
-    }
-  }) 
-  </script>
+  <div>
+    <video ref="videoPlayer" controls>
+      <source :src="videoUrl" type="video/mp4">
+      Ваш браузер не поддерживает тег video.
+    </video>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'AnimePlayerView',
+  data() {
+    return {
+      filename: '',
+      videoUrl: '',
+    };
+  },
+  created() {
+    this.filename = this.$route.params.filename;
+    this.videoUrl = `http://localhost:5000/files/get/${this.filename}`
+  }
+};
+</script>
+
 
 <style scoped>
 video {

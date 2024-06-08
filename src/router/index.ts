@@ -29,6 +29,11 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../views/AnimesView.vue')
   },
   {
+    path: '/watch/:filename',
+    name: 'watch',
+    component: () => import('../views/AnimePlayerView.vue')
+  },
+  {
     path: '/manga',
     name: 'mangas',
     component: () => import('../views/MangasView.vue')
