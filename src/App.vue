@@ -38,7 +38,7 @@ export default defineComponent({
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   font-weight: 400;
-  color: #bebebe;
+  color: #ffffff;
   box-sizing: border-box;
   background-color: black;
 }
