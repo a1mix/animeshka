@@ -21,7 +21,8 @@ const state = {
     searchQuery: '',
     limit: 15,
     page: 1
-  }
+  },
+  videoUrl: ''
 }
 
 export default createStore({
@@ -91,7 +92,10 @@ export default createStore({
     },
     setPage(state, page) {
       state.searchParams.page = page;
-    }
+    },
+    setVideoUrl(state, url) {
+      state.videoUrl = url;
+    },
   },
   actions: {
     async fetchAnimes(context, payload) {
@@ -191,6 +195,20 @@ export default createStore({
        console.log(error)
        localStorage.removeItem('token')
       }
-    }
+    },
+    saveFileToAssets({ commit }, { file, filePath }) {
+      // Используем require.context или file-loader webpack для сохранения файла в папке assets
+      const context = require.context('../assets', false, /\.(mp4|webm|ogg)$/);
+      context.keys().forEach((key) => {
+        if (key.endsWith(filePath.split('/').pop())) {
+          commit('setVideoUrl', context(key));
+        }
+      });
+      // Сохраняем файл в папке assets
+      context.keys().length
+        ? commit('setVideoUrl', context(`./${filePath.split('/').pop()}`))
+        : commit('setVideoUrl', filePath);
+    },
+    
   }
 })
