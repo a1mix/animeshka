@@ -1,6 +1,6 @@
 <template>
   <div style="height: 100vh">
-    <v-sheet width="400" class="mx-auto bg-black">
+    <v-sheet width="400" class="mx-auto bg-white">
       <v-form fast-fail @submit.prevent="login">
         <v-text-field
       v-model="email"
@@ -20,10 +20,10 @@
         >
         </v-text-field>
 
-        <span>Don't have any account? </span>
-      <router-link to="/registration"> Register</router-link>
+        <span>У вас нет учетной записи? </span>
+      <router-link to="/registration"> Регистрация</router-link>
 
-        <v-btn type="submit" block class="mt-2" color="#9142b9">Log in</v-btn>
+        <v-btn type="submit" block class="mt-2" color="#9142b9">Войти</v-btn>
       </v-form>
     </v-sheet>
   </div>

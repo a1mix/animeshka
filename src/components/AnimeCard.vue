@@ -70,12 +70,12 @@
         <span class="score">{{ anime.score }}</span>
       </div>
       <p class="synopsis">{{ anime.synopsis }}</p>
-      <span class="episodes">Episodes: {{ anime.episodes }}</span>
+      <span class="episodes">Эпизоды: {{ anime.episodes }}</span>
       <v-btn color="#9142b9" :disabled="isAnimeInFavorite" @click="addAnimeToFavorites()" v-if="!isAnimeInFavorite">
-        Add to favorites
+        Добавить в избранное
       </v-btn>
       <v-btn color="red" :disabled="!isAnimeInFavorite" @click="deleteAnimeFromFavorites()" v-if="isAnimeInFavorite">
-        Delete from favorites
+        Удалить из избранного
       </v-btn>
     </div>
   </div>
@@ -182,7 +182,7 @@ a {
 }
 
 .synopsis {
-  color: #a4a4a4;
+  color: #888787;
   font-size: 16px;
   font-weight: 300;
 }
