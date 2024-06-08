@@ -1,20 +1,18 @@
 <template>
   <nav>
-    <router-link to="/">
+    <router-link to="/anime">
       <h1>animeshka.</h1>
     </router-link>
     <div>
-      <router-link to="/">Home</router-link>
-      <router-link to="/anime">Anime</router-link>
-      <router-link to="/manga">Manga</router-link>
+      <!-- <router-link to="/">Home</router-link> -->
+      <router-link to="/anime">Аниме</router-link>
 
-      <router-link v-if="!isAuth" to="/about">About</router-link>
-      <router-link v-if="!isAuth" to="/login">Login</router-link>
+      <router-link v-if="!isAuth" to="/login">Логин</router-link>
 
-      <router-link v-if="isAuth" to="/user/favorites">My favorites</router-link>
-      <router-link v-if="isAuth" to="/user/account">Account</router-link>
+      <router-link v-if="isAuth" to="/user/favorites">Избранное</router-link>
+      <router-link v-if="isAuth" to="/user/account">Аккаунт</router-link>
       
-      <router-link v-if="isUserAdmin" to="/admin">Admin</router-link>
+      <router-link v-if="isUserAdmin" to="/admin">Админ</router-link>
     </div>
   </nav>
 </template>
@@ -56,7 +54,7 @@ nav {
   gap: 20px;
   align-items: center;
   width: 100vw;
-  background: rgba(0, 0, 0, 0.731);
+  background: #63627a;
   backdrop-filter: blur(4px);
 }
 
@@ -71,7 +69,7 @@ nav a {
 }
 
 nav a.router-link-exact-active {
-  color: #9142b9;
+  color: #ffffff;
 }
 
 @media screen and (max-width: 768px) {

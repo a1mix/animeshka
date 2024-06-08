@@ -26,6 +26,7 @@ let animePlaceholder: IAnime = {
     status: '',
     score: 0,
     synopsis: '',
+    videos: [],
     year: 0,
     genres: [],
     streaming: [],

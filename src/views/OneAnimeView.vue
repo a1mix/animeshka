@@ -73,31 +73,33 @@
         <span class="score">{{ anime.score }}</span>
       </div>
       <p class="synopsis" v-if="anime.synopsis">{{ anime.synopsis }}</p>
-      <span class="episodes" v-if="anime.episodes">Episodes: {{ anime.episodes }}</span>
-      <span class="duration" v-if="anime.duration">Duration: {{ anime.duration }}</span>
-      <span>Status: {{ anime.status ? anime.status : 'no status' }}</span>
+      <span class="episodes" v-if="anime.episodes">Эпизоды: {{ anime.episodes }}</span>
+      <span class="duration" v-if="anime.duration">Описание: {{ anime.duration }}</span>
+      <span>Статус: {{ anime.status ? anime.status : 'no status' }}</span>
       <div class="genres" v-if="anime.genres.length > 0">
-        <span>Genres: </span>
+        <span>Жанры: </span>
         <div v-for="(genre, i) in anime.genres" :key="genre.mal_id">
           <span>{{ genre.name }}{{ i < anime.genres.length - 1 ? ',' : '' }}</span>
         </div>
       </div>
 
       <div class="trailer" v-if="anime.trailer.embed_url">
-        <p>Trailer: </p>
+        <p>Трейлер: </p>
         <iframe width="500" height="300" :src="anime.trailer.embed_url" frameborder="0"
           allow="accelerometer; encrypted-media; gyroscope; picture-in-picture">
         </iframe>
       </div>
-      <div class="streaming"  v-if="anime.streaming.length > 0"  v-for="stream in anime.streaming" :key="stream.name">
-        <v-btn class="bg-purple-darken-2" :href="stream.url" target="blank">
-          Watch on <strong> {{ stream.name }}</strong>
-        </v-btn>
+      <div class="btn-ep-num">
+        <div v-for="(video, i) in anime.videos" :key="video.episode_number">
+          <router-link :to="{ name: 'watch', params: { id: video.episode_path } }">
+            <button> {{ video.episode_number }} серия</button>
+          </router-link>
+        </div>
       </div>
     </div>
 
     <div v-if="anime.characters" class="characters item2">
-      <h3 v-if="anime.characters" class="characters-title">Main characters</h3>
+      <h3 v-if="anime.characters" class="characters-title">Главные герои</h3>
       <div v-for="character in anime.characters" :key="character.character.mal_id">
         <img :src="character.character.images.jpg.image_url" alt="" class="character-img">
         <h3>{{ character.character.name }}</h3>
@@ -105,7 +107,7 @@
     </div>
 
     <div v-if="anime.relations" class="relations item2">
-      <h3 class="relations-title">Related Releases</h3>
+      <h3 class="relations-title">Связанные релизы</h3>
       <div v-for="relation in anime.relations" :key="relation.relation">
         <h3>{{ relation.relation }}</h3>
         <div v-for="entry in relation.entry" :key="entry.mal_id">
@@ -118,12 +120,13 @@
 
     <ReviewCard v-for="review in anime.reviews?.data" :review="review" :key="review.mal_id" />
   <div v-if="notFound">
-    Not Found
+    Не найдено
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import axios from 'axios';
 import { mapGetters } from 'vuex'
 import animePlaceholder from '@/interfaces/animePlaceholder'
 import { IAnime } from '@/interfaces/IAnime';
@@ -171,6 +174,17 @@ export default defineComponent({
           if (reviews) {
             this.anime.reviews = reviews
           }
+
+          const episodes = await axios.get(`http://localhost:5000/episodes`, {
+            params: {
+              id: this.$route.params.id,
+            }
+          }).then(res =>res.data)
+
+          if (episodes) {
+            this.anime.videos = episodes
+          }
+
         }
         else {
           this.notFound = true
@@ -215,6 +229,20 @@ a {
 
 p {
   text-align: left;
+}
+
+button {
+  padding: 10px;
+  margin: 5px;
+  background-color: #7b1fa2;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+}
+
+.btn-ep-num {
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .title {

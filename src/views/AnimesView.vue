@@ -1,12 +1,12 @@
 <template>
-  <v-sheet width="600" class="mx-auto bg-black">
+  <v-sheet width="600" class="mx-auto bg-white">
     <v-form ref="form" @submit.prevent="fetchAnimes({ s: searchParams, f: 1 })" class="d-block">
-      <v-text-field :model-value="searchParams.searchQuery" @update:model-value="setSearchQuery(searchParams.searchQuery = $event)" label="Search...">
+      <v-text-field :model-value="searchParams.searchQuery" @update:model-value="setSearchQuery(searchParams.searchQuery = $event)" label="Поиск...">
       </v-text-field>
-      <v-autocomplete clearable label="Types" :model-value="searchParams.selectedType" @update:model-value="setSelectedType(searchParams.selectedType = $event)" :items="animeTypes">
+      <v-autocomplete clearable label="Типы" :model-value="searchParams.selectedType" @update:model-value="setSelectedType(searchParams.selectedType = $event)" :items="animeTypes">
       </v-autocomplete>
       <v-btn type="submit" color="#9142b9" class="d-block mx-auto">
-      Search
+      Поиск
     </v-btn>
     </v-form>
   </v-sheet>
@@ -23,7 +23,7 @@
     <AnimeCard v-for="anime in allAnimes" :key="anime.mal_id" :anime="anime" />
   </div>
   <h2 v-if="!isResult">
-    No results found
+    Результатов не найдено
   </h2>
 
   <div class="text-center">

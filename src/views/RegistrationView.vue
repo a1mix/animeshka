@@ -1,6 +1,6 @@
 <template>
   <div style="height: 100vh">
-    <v-sheet width="400" class="mx-auto bg-black">
+    <v-sheet width="400" class="mx-auto bg-white">
       <v-form fast-fail @submit.prevent="registration" bg-color="black">
         <v-text-field v-model="email" label="Email">
         </v-text-field>
@@ -8,7 +8,7 @@
         <v-text-field v-model="password" label="Password">
         </v-text-field>
 
-        <v-btn type="submit" color="#9142b9" block class="mt-2">Register</v-btn>
+        <v-btn type="submit" color="#9142b9" block class="mt-2">Регистрация</v-btn>
       </v-form>
     </v-sheet>
   </div>

@@ -1,6 +1,6 @@
 <template>
     <div class="main-container" v-if="users">
-        <h1>All users: </h1>
+        <h1>Все пользователи: </h1>
         <div v-for="user in users">
             <span>{{ user.email }}</span><span><v-btn color="red">Ban</v-btn></span>
         </div>

@@ -25,11 +25,12 @@ export default defineComponent({
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap');
 
+
 * {
   padding: 0px;
   margin: 0px;
   border: none;
-  color: rgb(205, 205, 205);
+  color: rgb(0, 0, 0);
 }
 
 #app {
@@ -38,9 +39,13 @@ export default defineComponent({
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   font-weight: 400;
-  color: #ffffff;
+  color: #000000;
   box-sizing: border-box;
-  background-color: black;
+  background-color: rgb(255, 255, 255);
+}
+
+body {
+  background-color: rgb(255, 255, 255);
 }
 
 .main-container {
@@ -52,4 +57,18 @@ export default defineComponent({
     padding-top: 50px;
   }
 }
+
+*::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+*::-webkit-scrollbar-track {
+  background: rgb(255, 255, 255);
+}
+*::-webkit-scrollbar-thumb {
+  background-color: rgb(70, 70, 73);
+  border-radius: 5px;
+  border: 3px solid rgb(70, 70, 73);
+}
+
 </style>
