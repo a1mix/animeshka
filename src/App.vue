@@ -43,10 +43,6 @@ export default defineComponent({
   background-color: black;
 }
 
-body {
-  background-color: black;
-}
-
 .main-container {
   padding-top: 70px;
 }
