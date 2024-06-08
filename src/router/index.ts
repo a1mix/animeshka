@@ -61,7 +61,19 @@ const routes: Array<RouteRecordRaw> = [
     name: 'admin',
     meta: { isAdminRoleRequired: true },
     component: () => import('../views/AdminView.vue')
-  }
+  },
+  {
+    path: '/episodes',
+    name: 'episodes',
+    meta: { isAdminRoleRequired: true },
+    component: () => import('../views/EpisodesListView.vue')
+  },
+  {
+    path: '/episodes/add',
+    name: 'episodesForm',
+    meta: { isAdminRoleRequired: true },
+    component: () => import('../views/EpisodesFormView.vue')
+  },
 ]
 
 const router = createRouter({
