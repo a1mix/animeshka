@@ -1,5 +1,5 @@
 <template>
-  <div class="episodes-form-view">
+  <div class="episodes-form-view" v-if="!isResult">
     <h2 class="form-title">Create New Episode</h2>
     <form @submit.prevent="createEpisode" class="episode-form">
       <div class="form-group">
@@ -18,8 +18,14 @@
         <label for="file" class="form-label">Episode File:</label>
         <input id="file" type="file" @change="onFileChange" required class="form-input" />
       </div>
-      <button type="submit" class="form-submit-button">Create Episode</button>
+      <button type="submit" class="form-submit-button" v-if="!isLoading">
+        Добавить
+      </button>
+      <v-progress-circular indeterminate v-if="isLoading"></v-progress-circular>
     </form>
+  </div>
+  <div v-if="isResult">
+    <h2>Эпизод добавлен!</h2>
   </div>
 </template>
 
@@ -33,8 +39,13 @@ export default {
       newEpisodeNumber: null,
       newAnimeId: null,
       newTitle: '',
-      newFile: null
+      newFile: null,
+      isLoading: false,
+      isResult: false,
     }
+  },
+  created() {
+    this.newAnimeId = this.$route.query.id;
   },
   methods: {
     onFileChange(event) {
@@ -42,13 +53,17 @@ export default {
     },
     async createEpisode() {
       try {
+        this.isLoading = true
         const formData = new FormData()
         formData.append('episode_number', this.newEpisodeNumber)
         formData.append('anime_id', this.newAnimeId)
         formData.append('title', this.newTitle)
         formData.append('file', this.newFile, this.newFile.name);
 
-        await axios.post('http://localhost:5000/episodes/', formData)
+        await axios.post('http://localhost:5000/episodes/', formData).then(res => {
+          this.isLoading = false
+          this.isResult = true
+        })
         // this.fetchEpisodes()
         // this.resetNewEpisodeForm()
       } catch (error) {

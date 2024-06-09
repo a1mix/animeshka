@@ -60,6 +60,7 @@ font-size: 28px;
 display: flex;
 align-items: center;
 gap: 5px;
+fill: black;
 }
 
 .score {

@@ -12,8 +12,7 @@
       <router-link v-if="isAuth" to="/user/favorites">Избранное</router-link>
       <router-link v-if="isAuth" to="/user/account">Аккаунт</router-link>
       
-      <router-link v-if="isUserAdmin" to="/episodes">Эпизоды</router-link>
-      <router-link v-if="isUserAdmin" to="/admin">Админ</router-link>
+      
     </div>
   </nav>
 </template>
@@ -55,7 +54,7 @@ nav {
   gap: 20px;
   align-items: center;
   width: 100vw;
-  background: #63627a;
+  background: #6c6b7494;
   backdrop-filter: blur(4px);
 }
 

@@ -1,14 +1,16 @@
 <template>
-  <v-progress-circular
-      indeterminate
-    v-if="isLoading"
-    ></v-progress-circular>
+  <v-progress-circular indeterminate v-if="isLoading"></v-progress-circular>
   <div class="container" v-if="!notFound && !isLoading">
-    <img :src="anime.images.jpg.large_image_url" alt="" class="anime-image">
+    <div class="photoAndEpisodeBtn">
+      <img :src="anime.images.jpg.large_image_url" alt="" class="anime-image">
+      <router-link v-if="isUserAdmin" :to="{ name: 'episodesForm', query: { id: anime.mal_id } }">
+        <v-btn color="#2D74CF">Добавить эпизод</v-btn>
+      </router-link>
+    </div>
     <div class="info">
       <h1>{{ anime.title }}</h1>
       <div class="rating" v-if="anime.score">
-        <svg fill="#ffffff" viewBox="0 0 64 64" version="1.1" xmlns="http://www.w3.org/2000/svg"
+        <svg viewBox="0 0 64 64" version="1.1" xmlns="http://www.w3.org/2000/svg"
           xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/"
           style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;" stroke="#ffffff">
           <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -118,7 +120,7 @@
     </div>
   </div>
 
-    <ReviewCard v-for="review in anime.reviews?.data" :review="review" :key="review.mal_id" />
+  <ReviewCard v-for="review in anime.reviews?.data" :review="review" :key="review.mal_id" />
   <div v-if="notFound">
     Не найдено
   </div>
@@ -127,7 +129,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import axios from 'axios';
-import { mapGetters } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 import animePlaceholder from '@/interfaces/animePlaceholder'
 import { IAnime } from '@/interfaces/IAnime';
 import ReviewCard from '@/components/ReviewCard.vue'
@@ -145,8 +147,19 @@ export default defineComponent({
   async mounted() {
     this.fetchAnime()
   },
-  computed: mapGetters(['allAnimes']),
+  computed: {
+    ...mapGetters(['allAnimes', 'isAuth', 'currentUser']),
+    isUserAdmin() {
+      if (this.currentUser.roles) {
+        const admin = this.currentUser.roles.find((role: any) => role.value === "ADMIN")
+        if (admin) return true
+        else return false
+      }
+    }
+  },
+
   methods: {
+    ...mapMutations(['updateIsAuth', 'setUser']),
     async fetchAnime() {
       this.notFound = false
       this.isLoading = true
@@ -175,11 +188,8 @@ export default defineComponent({
             this.anime.reviews = reviews
           }
 
-          const episodes = await axios.get(`http://localhost:5000/episodes`, {
-            params: {
-              id: this.$route.params.id,
-            }
-          }).then(res =>res.data)
+          const episodes = await axios.get(`http://localhost:5000/episodes/${this.$route.params.id}`)
+            .then(res => res.data)
 
           if (episodes) {
             this.anime.videos = episodes
@@ -253,6 +263,7 @@ button {
   display: flex;
   align-items: center;
   gap: 5px;
+  fill: black;
 }
 
 .score {

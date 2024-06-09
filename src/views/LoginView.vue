@@ -14,6 +14,7 @@
         v-model="password"
       :error-messages="v$.password.$errors.map((e: any)=> e.$message)"
       label="Password"
+      type="password"
       required
       @input="v$.password.$touch"
       @blur="v$.password.$touch"

@@ -85,6 +85,10 @@ export default {
   padding: 2rem;
 }
 
+a {
+  text-decoration: none;
+}
+
 .title {
   text-align: center;
   margin-bottom: 2rem;

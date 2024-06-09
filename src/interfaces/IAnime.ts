@@ -12,7 +12,7 @@ export interface IAnime {
   type: string
   source: string
   episodes: number
-  videos: []
+  videos: any[]
   status: string
   airing: boolean
   aired: Aired

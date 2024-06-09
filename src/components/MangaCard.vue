@@ -5,7 +5,7 @@
       <router-link :to="{ name: 'manga', params: { id: manga.mal_id } }">
         <h1>{{ manga.title }}</h1>
       </router-link>
-      <div class="rating"><svg fill="#ffffff" viewBox="0 0 64 64" version="1.1" xmlns="http://www.w3.org/2000/svg"
+      <div class="rating"><svg viewBox="0 0 64 64" version="1.1" xmlns="http://www.w3.org/2000/svg"
           xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/"
           style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;" stroke="#ffffff">
           <g id="SVGRepo_bgCarrier" stroke-width="0"></g>

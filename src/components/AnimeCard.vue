@@ -5,7 +5,7 @@
       <router-link :to="{ name: 'anime', params: { id: anime.mal_id } }">
         <h1>{{ anime.title }}</h1>
       </router-link>
-      <div class="rating"><svg fill="#ffffff" viewBox="0 0 64 64" version="1.1" xmlns="http://www.w3.org/2000/svg"
+      <div class="rating"><svg viewBox="0 0 64 64" version="1.1" xmlns="http://www.w3.org/2000/svg"
           xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/"
           style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;" stroke="#ffffff">
           <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -71,9 +71,12 @@
       </div>
       <p class="synopsis">{{ anime.synopsis }}</p>
       <span class="episodes">Эпизоды: {{ anime.episodes }}</span>
-      <v-btn color="#9142b9" :disabled="isAnimeInFavorite" @click="addAnimeToFavorites()" v-if="!isAnimeInFavorite">
+      <v-btn color="#9142b9" :disabled="isAnimeInFavorite" @click="addAnimeToFavorites()" v-if="!isAnimeInFavorite"
+        class="white--text">
         Добавить в избранное
       </v-btn>
+
+
       <v-btn color="red" :disabled="!isAnimeInFavorite" @click="deleteAnimeFromFavorites()" v-if="isAnimeInFavorite">
         Удалить из избранного
       </v-btn>
@@ -175,6 +178,7 @@ a {
   display: flex;
   align-items: center;
   gap: 5px;
+  fill: black;
 }
 
 .score {
