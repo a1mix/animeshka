@@ -71,13 +71,13 @@
       </div>
       <p class="synopsis">{{ anime.synopsis }}</p>
       <span class="episodes">Эпизоды: {{ anime.episodes }}</span>
-      <v-btn color="#9142b9" :disabled="isAnimeInFavorite" @click="addAnimeToFavorites()" v-if="!isAnimeInFavorite"
+      <v-btn v-if="isAuth && !isAnimeInFavorite" color="#9142b9" :disabled="isAnimeInFavorite" @click="addAnimeToFavorites()"
         class="white--text">
         Добавить в избранное
       </v-btn>
 
 
-      <v-btn color="red" :disabled="!isAnimeInFavorite" @click="deleteAnimeFromFavorites()" v-if="isAnimeInFavorite">
+      <v-btn v-if="isAuth && isAnimeInFavorite" color="red" :disabled="!isAnimeInFavorite" @click="deleteAnimeFromFavorites()">
         Удалить из избранного
       </v-btn>
     </div>
@@ -101,7 +101,7 @@ export default defineComponent({
     this.checkAnimeInFavorite()
   },
   computed: {
-    ...mapGetters(['userFavoriteAnimes', 'currentUser'])
+    ...mapGetters(['userFavoriteAnimes', 'currentUser', 'isAuth'])
   },
   methods: {
     ...mapMutations(['setUserAnimes']),

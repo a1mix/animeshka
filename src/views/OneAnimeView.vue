@@ -120,7 +120,6 @@
     </div>
   </div>
 
-  <ReviewCard v-for="review in anime.reviews?.data" :review="review" :key="review.mal_id" />
   <div v-if="notFound">
     Не найдено
   </div>
@@ -182,11 +181,7 @@ export default defineComponent({
             this.anime.characters = mainCharacters
           }
 
-          const reviews = await fetch(`https://api.jikan.moe/v4/anime/${this.$route.params.id}/reviews`)
-            .then(res => res.ok ? res.json() : this.notFound = true)
-          if (reviews) {
-            this.anime.reviews = reviews
-          }
+          
 
           const episodes = await axios.get(`http://localhost:5000/episodes/${this.$route.params.id}`)
             .then(res => res.data)
